@@ -33,15 +33,10 @@ class Authenticate {
     }
   }
 
-  login(BuildContext context) async {
-    var log = Provider.of<LocalInfo>(context, listen: false);
-    log.changeStatustoLogin();
-    await googleSignIn.signIn();
-  }
-
   logout(BuildContext context) async {
     var log = Provider.of<LocalInfo>(context, listen: false);
     log.changeStatustoLogout();
     googleSignIn.signOut();
+    await FirebaseAuth.instance.signOut();
   }
 }

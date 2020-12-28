@@ -114,6 +114,7 @@ class _NavDrawerState extends State<NavDrawer> {
             title: Text(AppLocalizations.of(context).translate("n_logout")),
             onTap: () {
               _authenticate.logout(context);
+              localData.removePhoneNo();
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => MyHomePage()));
             },
