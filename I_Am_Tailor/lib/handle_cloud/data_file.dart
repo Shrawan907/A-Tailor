@@ -11,17 +11,78 @@ FirebaseFirestore db = FirebaseFirestore.instance;
 
 DateTime timestamp = DateTime.now();
 
-List todayData = [];
+List activeData = [];
+List completedData = [];
+List tempData = [[], []];
+
+Future<List> fetchData(String phoneNo) async {
+  tempData.clear();
+  tempData = [[], []];
+  var dataPath = db.collection("company/team/members/$phoneNo/assigned");
+  dataPath.snapshots().listen((QuerySnapshot querySnapshot) {
+    querySnapshot.docs.forEach((element) {
+      Map temp = element.data();
+      print(temp);
+      if (temp["isComplete"]) {
+        tempData[1].addAll([
+          {
+            'regNo': temp["reg_no"],
+            'type': temp["type"],
+            'count': temp["count"]
+          }
+        ]);
+      } else {
+        tempData[0].addAll([
+          {
+            'regNo': temp["reg_no"],
+            'type': temp["type"],
+            'count': temp["count"]
+          }
+        ]);
+      }
+    });
+  });
+  await Future.delayed(Duration(seconds: 2));
+  return tempData;
+}
+
+void clearData() {
+  activeData.clear();
+  completedData.clear();
+}
+
+Future<List> getActiveData(String phoneNo) async {
+  if (activeData == null || activeData.isEmpty) {
+    List temp = await fetchData(phoneNo);
+    activeData = [...(temp[0])];
+    completedData.clear();
+    completedData = [...(temp[1])];
+    return activeData;
+  } else {
+    return activeData;
+  }
+}
+
+Future<List> getCompletedData(String phoneNo) async {
+  if (completedData == null || completedData.isEmpty) {
+    List temp = await fetchData(phoneNo);
+    completedData = [...(temp[1])];
+    activeData.clear();
+    activeData = [...(temp[0])];
+    return completedData;
+  }
+  return completedData;
+}
 
 Future<bool> makeRequest(String _username, String _profile, LocalInfo localData,
     BuildContext context) async {
   bool success = false;
   var requestPath = db.collection("company/requests/requests");
   var userPath = db.collection("company/team/members");
-  userPath.doc(localData.loginPhone).get().then((snapShot) => {
+  userPath.doc(LocalInfo.loginPhone).get().then((snapShot) => {
         if (snapShot.exists)
           {
-            userPath.doc(localData.loginPhone).update(
+            userPath.doc(LocalInfo.loginPhone).update(
                 {"name": _username, "profile": _profile, "requestMade": true})
           }
         else
@@ -29,7 +90,7 @@ Future<bool> makeRequest(String _username, String _profile, LocalInfo localData,
             print("Check Needed, no user saved on cloud but request is sent"),
           }
       });
-  requestPath.doc(localData.loginPhone).get().then((snapShot) async => {
+  requestPath.doc(LocalInfo.loginPhone).get().then((snapShot) async => {
         if (snapShot.exists)
           {
             print("Request already exists with this phone number"),
@@ -37,8 +98,8 @@ Future<bool> makeRequest(String _username, String _profile, LocalInfo localData,
           }
         else
           {
-            requestPath.doc(localData.loginPhone).set({
-              "phoneNo": localData.loginPhone,
+            requestPath.doc(LocalInfo.loginPhone).set({
+              "phoneNo": LocalInfo.loginPhone,
               "username": _username,
               "requestProfile": _profile
             }),
@@ -46,7 +107,7 @@ Future<bool> makeRequest(String _username, String _profile, LocalInfo localData,
                 .collection("company")
                 .doc("requests")
                 .update({"total": FieldValue.increment(1)}),
-            print(localData.loginPhone),
+            print(LocalInfo.loginPhone),
             localData.saveDetails(_username, _profile),
             localData.saveRequest(),
             success = true,
@@ -65,10 +126,10 @@ Future<bool> deleteRequest(LocalInfo localData) async {
   bool success = false;
   var requestPath = db.collection("company/requests/requests");
   var userPath = db.collection("company/team/members");
-  userPath.doc(localData.loginPhone).get().then((snapShot) => {
+  userPath.doc(LocalInfo.loginPhone).get().then((snapShot) => {
         if (snapShot.exists)
           {
-            userPath.doc(localData.loginPhone).update({
+            userPath.doc(LocalInfo.loginPhone).update({
               "name": "",
               "profile": "",
               "requestMade": false,
@@ -80,10 +141,10 @@ Future<bool> deleteRequest(LocalInfo localData) async {
                 "Check Needed, no user saved on cloud but request is deleted"),
           }
       });
-  requestPath.doc(localData.loginPhone).get().then((snapShot) => {
+  requestPath.doc(LocalInfo.loginPhone).get().then((snapShot) => {
         if (snapShot.exists)
           {
-            requestPath.doc(localData.loginPhone).delete(),
+            requestPath.doc(LocalInfo.loginPhone).delete(),
             db.collection("company").doc("requests").update(
               {"total": FieldValue.increment(-1)},
             ),
@@ -91,7 +152,9 @@ Future<bool> deleteRequest(LocalInfo localData) async {
             success = true,
           }
         else
-          {print("There is no request with" + localData.loginPhone)}
+          {
+            print("There is no request with" + LocalInfo.loginPhone),
+          }
       });
   await Future.delayed(Duration(seconds: 1));
   return success;
@@ -118,10 +181,10 @@ Future saveUserInfo(String phoneNo) async {
 
 Future checkStatus(BuildContext context, LocalInfo localData) async {
   var userPath = db.collection("company/team/members");
-  userPath.doc(localData.loginPhone).get().then((snapShot) => {
+  userPath.doc(LocalInfo.loginPhone).get().then((snapShot) => {
         if (snapShot.exists)
           {
-            userPath.doc(localData.loginPhone).get().then((element) => {
+            userPath.doc(LocalInfo.loginPhone).get().then((element) => {
                   if (element.data().containsKey("requestAccepted"))
                     {
                       if (element.data()["requestAccepted"] == true)
@@ -145,11 +208,11 @@ Future checkStatus(BuildContext context, LocalInfo localData) async {
 Future getLocalDetails(LocalInfo localData) async {
   var userPath = db.collection("company/team/members");
   Map temp;
-  userPath.doc(localData.loginPhone).get().then((snapShot) => {
+  userPath.doc(LocalInfo.loginPhone).get().then((snapShot) => {
         if (snapShot.exists)
           {
             print("User Exists"),
-            userPath.doc(localData.loginPhone).get().then((element) => {
+            userPath.doc(LocalInfo.loginPhone).get().then((element) => {
                   if (element.exists)
                     {
                       temp = element.data(),

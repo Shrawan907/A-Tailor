@@ -137,7 +137,7 @@ class _StatusPageState extends State<StatusPage> {
                                   Text("Name", style: TextStyle(fontSize: 20)),
                             ),
                             Expanded(
-                              child: Text(localData.name,
+                              child: Text(LocalInfo.name,
                                   style: TextStyle(
                                       fontSize: 20, color: Colors.blue[900])),
                             ),
@@ -154,7 +154,7 @@ class _StatusPageState extends State<StatusPage> {
                                   style: TextStyle(fontSize: 20)),
                             ),
                             Expanded(
-                              child: Text(localData.profile,
+                              child: Text(LocalInfo.profile,
                                   style: TextStyle(
                                       fontSize: 20, color: Colors.blue[900])),
                             ),
@@ -171,7 +171,7 @@ class _StatusPageState extends State<StatusPage> {
                                   style: TextStyle(fontSize: 20)),
                             ),
                             Expanded(
-                              child: Text(localData.loginPhone,
+                              child: Text(LocalInfo.loginPhone,
                                   style: TextStyle(
                                       fontSize: 20, color: Colors.blue[900])),
                             ),
@@ -189,7 +189,7 @@ class _StatusPageState extends State<StatusPage> {
                             ),
                             Expanded(
                               child: Text(
-                                  (localData.requestAccepted
+                                  (LocalInfo.requestAccepted
                                       ? "Yes"
                                       : "Not Yet"),
                                   style: TextStyle(

@@ -17,8 +17,8 @@ void main() async {
   LocalInfo localData = LocalInfo();
   await localData.fetchLocale();
   await localData.fetchLocalDetail();
-  print(" XXXX " + localData.loggedIn.toString());
-  print("request: " + localData.requestMade.toString());
+  print(" XXXX " + LocalInfo.loggedIn.toString());
+  print("request: " + LocalInfo.requestMade.toString());
   runApp(MyApp(
     localData: localData,
   ));
@@ -50,14 +50,14 @@ class MyApp extends StatelessWidget {
                 primarySwatch: Colors.amber,
                 visualDensity: VisualDensity.adaptivePlatformDensity,
                 accentColor: Colors.grey),
-            home: (localData.loggedIn == false
+            home: (LocalInfo.loggedIn == false
                 ? MyHomePage(
                     title:
                         "I AM TAILOR", //AppLocalizations.of(context).translate("welcom_aap_name"),
                   )
-                : localData.requestMade == false
+                : LocalInfo.requestMade == false
                     ? RequestPage()
-                    : localData.requestAccepted == false
+                    : LocalInfo.requestAccepted == false
                         ? StatusPage()
                         : HomePage()));
       }),

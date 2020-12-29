@@ -31,12 +31,12 @@ class _RequestPageState extends State<RequestPage> {
 
   void sendRequest(LocalInfo localData) async {
     SnackBar sanckBar;
-    print(localData.loginPhone.length);
+    print(LocalInfo.loginPhone.length);
     if (_username != null &&
         _profile != null &&
         _username.length > 3 &&
         _username.length < 25 &&
-        localData.loginPhone.length == 13) {
+        LocalInfo.loginPhone.length == 13) {
       await makeRequest(_username, _profile, localData, context);
     } else {
       sanckBar = SnackBar(content: Text("Username format is not correct"));

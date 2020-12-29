@@ -63,8 +63,8 @@ class _MyHomePageState extends State<MyHomePage> {
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-              builder: (context) => (log.requestMade
-                  ? (log.requestAccepted ? HomePage() : StatusPage())
+              builder: (context) => (LocalInfo.requestMade
+                  ? (LocalInfo.requestAccepted ? HomePage() : StatusPage())
                   : RequestPage()),
             ),
             (route) => false);
@@ -119,8 +119,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => (log.requestMade
-                                ? (log.requestAccepted
+                            builder: (context) => (LocalInfo.requestMade
+                                ? (LocalInfo.requestAccepted
                                     ? HomePage()
                                     : StatusPage())
                                 : RequestPage()),

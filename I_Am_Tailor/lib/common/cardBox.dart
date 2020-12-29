@@ -2,157 +2,6 @@ import 'package:I_Am_Tailor/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-class CardBox extends StatelessWidget {
-  final String reg_no;
-  final bool is_complete;
-  final String coat;
-
-  const CardBox({this.reg_no, this.is_complete, this.coat});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: Colors.blue[50], // lightGreenAccent
-      child: Container(
-        height: 40,
-        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            Expanded(
-              child: Text(
-                '$reg_no',
-                style: TextStyle(
-                    fontWeight: FontWeight.w900,
-                    fontSize: 30,
-                    color: Colors.deepPurple),
-              ),
-            ),
-            Expanded(
-              child: Text(
-                coat == '0' ? " " : "    " + coat,
-                style: TextStyle(fontSize: 22),
-              ),
-            ),
-            Expanded(
-              child: is_complete
-                  ? Icon(
-                      Icons.check,
-                      color: Colors.green,
-                    )
-                  : Icon(
-                      Icons.close,
-                      color: Colors.red,
-                    ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class DayCardBox extends StatelessWidget {
-  final String reg_no;
-  final bool is_complete;
-  final String coat;
-
-  const DayCardBox({this.reg_no, this.is_complete, this.coat});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: Colors.blue[50], // lightGreenAccent
-      child: Container(
-        height: 40,
-        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            Expanded(
-              child: Text(
-                '$reg_no',
-                style: TextStyle(
-                    fontWeight: FontWeight.w900,
-                    fontSize: 30,
-                    color: Colors.deepPurple),
-              ),
-            ),
-            Expanded(
-              child: Text(
-                coat == '0' ? " " : "    " + coat,
-                style: TextStyle(fontSize: 22),
-              ),
-            ),
-            Expanded(
-              child: is_complete
-                  ? Icon(
-                      Icons.check,
-                      color: Colors.green,
-                    )
-                  : Text(""),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class PersonInfo extends StatelessWidget {
-  final String name;
-  final Widget image;
-  final Color color;
-  final Function onPressed;
-
-  PersonInfo({this.name, this.image, this.onPressed, this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10.0, right: 10),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: this.color, width: 2),
-          color: Colors.transparent,
-        ),
-        height: 150,
-        width: 150,
-        child: RaisedButton(
-          color: Colors.tealAccent,
-          padding: EdgeInsets.only(left: 0),
-          onPressed: this.onPressed,
-          child: Column(
-            children: [
-              Expanded(
-                  child: Container(
-                child: this.image,
-              )),
-              Container(
-                color: this.color,
-                height: 40,
-                width: 150,
-                //width: double.infinity,
-                child: Center(
-                  child: Text(
-                    this.name,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class InfoCard extends StatelessWidget {
   final ImageProvider image;
   final String name;
@@ -232,13 +81,15 @@ class InfoCard extends StatelessWidget {
   }
 }
 
-class ShirtCardBox extends StatelessWidget {
-  final String regNo;
-  final Color color;
+class CardBox extends StatelessWidget {
+  final int regNo;
+  final int count;
   final String type;
   final bool isColor;
+  final String profile;
 
-  const ShirtCardBox({this.regNo, this.color, this.type, this.isColor});
+  const CardBox(
+      {this.regNo, this.count, this.type, this.isColor, this.profile});
 
   @override
   Widget build(BuildContext context) {
@@ -248,61 +99,102 @@ class ShirtCardBox extends StatelessWidget {
       child: Container(
         height: 25,
         margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            Expanded(
-              child: Text(
-                '$regNo',
-                style: TextStyle(
-                    //fontWeight: FontWeight.bold,
-                    fontSize: 25,
-                    color: color),
-              ),
-            ),
-            Expanded(
-              child: type == "safari"
-                  ? Icon(
-                      Icons.check,
-                      color: Colors.amber,
-                    )
-                  : Text(""),
-            ),
-            Expanded(
-              child: type == "kurta"
-                  ? Icon(
-                      Icons.check,
-                      color: Colors.amber,
-                    )
-                  : Text(""),
-            ),
-            Expanded(
-              child: type == "pajama"
-                  ? Icon(
-                      Icons.check,
-                      color: Colors.amber,
-                    )
-                  : Text(""),
-            ),
-            Expanded(
-              child: type == "shirt"
-                  ? Icon(
-                      Icons.check,
-                      color: Colors.amber,
-                    )
-                  : Text(""),
-            ),
-            // Expanded(
-            //   child: this.isComplete
-            //       ? Icon(
-            //           Icons.check,
-            //           color: Colors.green,
-            //         )
-            //       : Text(""),
-            // ),
-          ],
-        ),
+        child: (profile == "SHIRT MAKER")
+            ? Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  Expanded(
+                    child: Text(
+                      '$regNo',
+                      style: TextStyle(
+                          //fontWeight: FontWeight.bold,
+                          fontSize: 25,
+                          color: Colors.black54),
+                    ),
+                  ),
+                  Expanded(
+                    child: type == "safari"
+                        ? Text("$count",
+                            style:
+                                TextStyle(fontSize: 20, color: Colors.black54))
+                        : Text(""),
+                  ),
+                  Expanded(
+                    child: type == "kurta"
+                        ? Text("$count",
+                            style:
+                                TextStyle(fontSize: 20, color: Colors.black54))
+                        : Text(""),
+                  ),
+                  Expanded(
+                    child: type == "pajama"
+                        ? Text("$count",
+                            style:
+                                TextStyle(fontSize: 20, color: Colors.black54))
+                        : Text(""),
+                  ),
+                  Expanded(
+                    child: type == "shirt"
+                        ? Text("$count",
+                            style:
+                                TextStyle(fontSize: 20, color: Colors.black54))
+                        : Text(""),
+                  ),
+                ],
+              )
+            : (profile == "PENT MAKER")
+                ? Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      Expanded(
+                        child: Text(
+                          '$regNo',
+                          style: TextStyle(
+                              //fontWeight: FontWeight.bold,
+                              fontSize: 25,
+                              color: Colors.black54),
+                        ),
+                      ),
+                      Expanded(
+                        child: type == "pent"
+                            ? Text("$count",
+                                style: TextStyle(
+                                    fontSize: 20, color: Colors.black54))
+                            : Text(""),
+                      ),
+                    ],
+                  )
+                : Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      Expanded(
+                        child: Text(
+                          '$regNo',
+                          style: TextStyle(
+                              //fontWeight: FontWeight.bold,
+                              fontSize: 25,
+                              color: Colors.black54),
+                        ),
+                      ),
+                      Expanded(
+                        child: type == "coat"
+                            ? Text("$count",
+                                style: TextStyle(
+                                    fontSize: 20, color: Colors.black54))
+                            : Text(""),
+                      ),
+                      Expanded(
+                        child: type == "achkan"
+                            ? Text("$count",
+                                style: TextStyle(
+                                    fontSize: 20, color: Colors.black54))
+                            : Text(""),
+                      ),
+                    ],
+                  ),
       ),
     );
   }
@@ -357,7 +249,7 @@ Card buildHeader(String headerType, BuildContext context) {
         ),
       ),
     );
-  } else if (headerType == "Shirt Maker") {
+  } else if (headerType == "SHIRT MAKER") {
     return Card(
       child: Container(
         height: 20,
@@ -425,6 +317,28 @@ Card buildHeader(String headerType, BuildContext context) {
       ),
     );
   } else {
-    return Card();
+    return Card(
+      child: Container(
+        height: 20,
+        decoration: BoxDecoration(
+          color: Colors.black54,
+        ),
+        padding: EdgeInsets.only(left: 15, right: 15),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Expanded(
+                child: Text(
+              AppLocalizations.of(context).translate("reg_no"),
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  color: Colors.white),
+            )),
+          ],
+        ),
+      ),
+    );
   }
 }

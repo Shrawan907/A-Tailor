@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:I_Am_Tailor/locale/app_localization.dart';
+import 'package:I_Am_Tailor/locale/localInfo.dart';
 import 'package:flutter/material.dart';
 import 'package:I_Am_Tailor/common/nav.drower.dart';
 import 'package:I_Am_Tailor/common/cardBox.dart';
@@ -60,6 +61,25 @@ class CompletedWork extends StatefulWidget {
 }
 
 class _CompletedWorkState extends State<CompletedWork> {
+  String profile = "";
+
+  @override
+  void initState() {
+    super.initState();
+    initialData();
+  }
+
+  void initialData() async {
+    profile = LocalInfo.profile;
+    await getData();
+  }
+
+  Future getData() async {
+    items.clear();
+    items = [...(await getCompletedData(LocalInfo.loginPhone))];
+    setState(() {});
+  }
+
   onPressed() {
     Navigator.push(context, MaterialPageRoute(builder: (context) => OnWork()));
   }
@@ -67,23 +87,40 @@ class _CompletedWorkState extends State<CompletedWork> {
   @override
   Widget build(BuildContext parentContext) {
     return Scaffold(
-      //backgroundColor: Colors.grey[300],
       drawer: NavDrawer(),
       appBar: AppBar(
         title: Text(AppLocalizations.of(context).translate("member_diary")),
+        actions: [
+          GestureDetector(
+            onTap: getData,
+            child: Container(
+              margin: EdgeInsets.only(right: 20),
+              child: Icon(Icons.refresh),
+            ),
+          ),
+        ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
+      body: RefreshIndicator(
+        onRefresh: () async {
+          try {
+            clearData();
+            getData();
+          } catch (err) {
+            print(err);
+          }
+        },
+        child: ListView(
           children: [
             StickyHeader(
-              header: buildHeader("Shirt Maker", context),
+              header: buildHeader("SHIRT MAKER", context),
               content: Column(
                 children: [
                   for (int i = 0; i < items.length; i++)
-                    ShirtCardBox(
+                    CardBox(
                       regNo: items[i]['regNo'],
-                      color: Colors.black,
+                      count: items[i]["count"],
                       type: items[i]['type'],
+                      profile: this.profile,
                       isColor: i & 1 == 1,
                     ),
                 ],
