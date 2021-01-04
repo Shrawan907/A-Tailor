@@ -229,7 +229,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     Timer(Duration(seconds: 1), () {});
                     return;
                   }
+                  // print(phoneNo+"/////////////");
                   this.phoneNo = ("+91" + this.phoneNo).trim();
+                  // print(this.phoneNo = ("+91" + this.phoneNo).trim()+"/////////////");
+                  // print(phoneNo+"/////////////");
                   veifyPhone();
                 },
               ),

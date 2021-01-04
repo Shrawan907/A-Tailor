@@ -14,11 +14,13 @@ DateTime timestamp = DateTime.now();
 List activeData = [];
 List completedData = [];
 List tempData = [[], []];
+List reqData = [];
 
 Future<List> fetchData(String phoneNo) async {
   tempData.clear();
   tempData = [[], []];
   var dataPath = db.collection("company/team/members/$phoneNo/assigned");
+  // print(phoneNo);
   dataPath.snapshots().listen((QuerySnapshot querySnapshot) {
     querySnapshot.docs.forEach((element) {
       Map temp = element.data();
@@ -237,3 +239,50 @@ Future getLocalDetails(LocalInfo localData) async {
       });
   await Future.delayed(Duration(seconds: 2));
 }
+
+Future<List> fetchRequestData(String phone) async {
+  tempData.clear();
+  var membersPath = db.collection("company/team/members");
+  membersPath.snapshots().listen((QuerySnapshot querySnapshot) {
+    querySnapshot.docs.forEach((element) {
+      Map temp = element.data();
+      // print(temp);
+      if (temp.containsKey("phoneNo") && temp["phoneNo"] == phone) {
+        tempData.addAll([
+          {
+            "requestMade": temp["requestMade"],
+            "requestAccepted": temp["requestAccepted"]
+          }
+        ]);
+        // print("////////////////");
+        // print(tempData);
+        // print("////////////////");
+      }
+    });
+  });
+  await Future.delayed(Duration(seconds: 2));
+  print(tempData);
+  // print("//// $phone /////");
+  return tempData;
+}
+
+Future<List> getRequestData(String phone) async {
+  reqData.clear();
+  // reqData.clear();
+  reqData = [...(await fetchRequestData(phone))];
+  // print(reqData);
+  return reqData;
+}
+
+Future<void> deleteUser(String phone) {
+  CollectionReference users = FirebaseFirestore.instance.collection('company/team/members');
+  return users
+      .doc(phone)
+      .delete()
+      .then((value) => print("User Deleted"))
+      .catchError((error) => print("Failed to delete user: $error"));
+}
+
+// bool requestAccepted(){
+//   return
+// }

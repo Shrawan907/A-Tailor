@@ -10,10 +10,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:I_Am_Tailor/common/nav.drower.dart';
-// import 'package:I_Am_Tailor/test_screen.dart';
-import 'package:I_Am_Tailor/screens/homepage.dart';
 import 'package:I_Am_Tailor/handle_cloud/data_file.dart';
 import 'package:provider/provider.dart';
+import 'package:toast/toast.dart';
 
 class StatusPage extends StatefulWidget {
   @override
@@ -22,10 +21,11 @@ class StatusPage extends StatefulWidget {
 
 class _StatusPageState extends State<StatusPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
+  List reqData=[];
   @override
   void initState() {
     super.initState();
+    fetchInitalData();
   }
 
 // pushReplacement is giving warning! , check later
@@ -36,6 +36,19 @@ class _StatusPageState extends State<StatusPage> {
         context, MaterialPageRoute(builder: (newcontext) => RequestPage()));
   }
 
+  void fetchInitalData() async {
+    await fetchReqData();
+    setState(() {});
+  }
+
+  Future fetchReqData() async {
+    reqData.clear();
+    reqData.addAll(await getRequestData(LocalInfo.loginPhone));
+    // print("`````````````````");
+    // print(reqData);
+    // print("`````````````````");
+  }
+
   void onRefresh(BuildContext context, LocalInfo localData) async {
     await checkStatus(context, localData);
   }
@@ -43,6 +56,7 @@ class _StatusPageState extends State<StatusPage> {
   @override
   Widget build(BuildContext context) {
     LocalInfo localData = Provider.of<LocalInfo>(context);
+    // LocalInfo localInfo=new LocalInfo();
     return Scaffold(
       key: _scaffoldKey,
       drawer: NavDrawer(),
@@ -63,7 +77,34 @@ class _StatusPageState extends State<StatusPage> {
         alignment: Alignment.topCenter,
         child: RefreshIndicator(
           onRefresh: () async {
-            print("hello");
+            try {
+              await fetchReqData();
+              Map temp=reqData.asMap();
+              bool reqMade=temp[0]["requestMade"] as bool;
+              // print("#########");
+              // print(reqMade);
+              // print("#########");
+              setState(() {});
+              if(reqMade==false){
+                // deleteUser(LocalInfo.loginPhone,localInfo);
+                Toast.show("Request is decline by admin...", context,    //change regNo_exist to reg_no_exist
+                    duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
+                deleteRequestMethod(localData, context);
+                await Future.delayed(Duration(seconds: 3));
+                Navigator.pushReplacement(
+                    context, MaterialPageRoute(builder: (newcontext) => RequestPage()));
+              }
+              else{
+                SnackBar snackBar = SnackBar(
+                  content: Text("Wait till your request get accepted!!!"),
+                );
+                _scaffoldKey.currentState.showSnackBar(snackBar);
+                Timer(Duration(seconds: 2), () { });
+              }
+              // print(reqData.contains("requestMade"));
+            } catch (err) {
+              print("Refresh Bar Error: " + err.toString());
+            }
             onRefresh(context, localData);
             return;
           },
